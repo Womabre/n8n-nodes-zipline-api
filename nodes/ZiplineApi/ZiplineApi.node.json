@@ -1,0 +1,18 @@
+{
+	"node": "n8n-nodes-base.ZiplineApi",
+	"nodeVersion": "1.0",
+	"codexVersion": "1.0",
+	"categories": ["Zipline", "Data", "Cloud"],
+	"resources": {
+		"credentialDocumentation": [
+			{
+				"url": "https://zipline.diced.sh/docs/api/authentication"
+			}
+		],
+		"primaryDocumentation": [
+			{
+				"url": "https://zipline.diced.sh/docs/api"
+			}
+		]
+	}
+}
