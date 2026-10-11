@@ -30,11 +30,10 @@
 		"format": "prettier nodes credentials --write",
 		"lint": "n8n-node lint",
 		"lint:fix": "n8n-node lint --fix",
-		"release": "n8n-node release",
+		"release": "release-it",
 		"test": "vitest run",
 		"test:watch": "vitest",
-		"prepublishOnly": "n8n-node prerelease",
-		"version": "auto-changelog -p && git add CHANGELOG.md"
+		"prepublishOnly": "n8n-node prerelease"
 	},
 	"files": [
 		"dist"
@@ -61,8 +60,7 @@
 		"prettier": "3.6.2",
 		"release-it": "^19.0.4",
 		"typescript": "5.9.2",
-		"vitest": "^4.1.2",
-		"auto-changelog": "2.6.0"
+		"vitest": "^4.1.2"
 	},
 	"peerDependencies": {
 		"n8n-workflow": "*"
