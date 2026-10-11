@@ -6,6 +6,19 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-10-11
+
+No changes to the node itself; this release moves publishing to npm Trusted Publishing.
+
+### Changed
+
+- Publishing authenticates with npm Trusted Publishing (OIDC) only; the workflow no longer
+  passes an npm token.
+- The publish workflow uses `actions/checkout@v7` and `actions/setup-node@v7` (Node 24 runtime)
+  and no longer caches dependencies, so a poisoned cache cannot end up in a published package.
+- GitHub releases take their notes from this changelog instead of the commit list.
+- `repository.url` uses npm's normalized `git+https://` form.
+
 ## [1.0.0] - 2026-10-11
 
 First public release of the Zipline API n8n community node.
@@ -31,5 +44,6 @@ First public release of the Zipline API n8n community node.
 - Releases via release-it (`npm run release`), and a GitHub Actions workflow that publishes to
   npm with provenance when a version tag is pushed.
 
-[Unreleased]: https://github.com/Womabre/n8n-nodes-zipline-api/compare/1.0.0...HEAD
+[Unreleased]: https://github.com/Womabre/n8n-nodes-zipline-api/compare/1.0.1...HEAD
+[1.0.1]: https://github.com/Womabre/n8n-nodes-zipline-api/compare/1.0.0...1.0.1
 [1.0.0]: https://github.com/Womabre/n8n-nodes-zipline-api/releases/tag/1.0.0

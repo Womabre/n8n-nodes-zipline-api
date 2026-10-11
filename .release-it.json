@@ -9,7 +9,9 @@
 		"push": true
 	},
 	"github": {
-		"release": true
+		"release": true,
+		"releaseName": "${version}",
+		"releaseNotes": "awk '/^## \\[${version}\\]/{f=1;next} /^## \\[|^\\[/{f=0} f' CHANGELOG.md"
 	},
 	"npm": {
 		"publish": false
