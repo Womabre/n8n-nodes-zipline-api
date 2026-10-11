@@ -1,8 +1,8 @@
 {
-	"node": "n8n-nodes-base.ZiplineApi",
+	"node": "n8n-nodes-zipline-api.ziplineApi",
 	"nodeVersion": "1.0",
 	"codexVersion": "1.0",
-	"categories": ["Zipline", "Data", "Cloud"],
+	"categories": ["Data & Storage"],
 	"resources": {
 		"credentialDocumentation": [
 			{

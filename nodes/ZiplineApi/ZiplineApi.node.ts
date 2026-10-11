@@ -1,22 +1,25 @@
 import { INodeType, INodeTypeDescription, NodeConnectionType } from 'n8n-workflow';
 
-// Import operations
-import * as upload from './operations/upload';
-import * as stats from './operations/stats';
-import * as version from './operations/version';
-import * as user from './operations/user';
+import { searchFiles } from './methods/listSearch';
 
-// Import shared parameters
-import * as shared from './parameters/shared-parameters';
+// Import operations
+import * as file from './operations/file';
+import * as system from './operations/system';
 
 export class ZiplineApi implements INodeType {
+	methods = {
+		listSearch: {
+			searchFiles,
+		},
+	};
+
 	description: INodeTypeDescription = {
 		displayName: 'Zipline API',
 		name: 'ziplineApi',
 		usableAsTool: true,
 		version: [2],
 		group: ['transform'],
-		icon: 'file:ZiplineApi.svg',
+		icon: { light: 'file:ZiplineApi.svg', dark: 'file:ZiplineApi.dark.svg' },
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
 		description: 'Interact with the Zipline API',
 		defaults: {
@@ -26,43 +29,43 @@ export class ZiplineApi implements INodeType {
 		outputs: ['main'] as NodeConnectionType[],
 
 		credentials: [
-			// {
-			// 	name: 'autodeskVaultDataOAuth2Api',
-			// 	required: false,
-			// 	displayOptions: {
-			// 		show: {
-			// 			authentication: ['OAuth2'],
-			// 		},
-			// 	},
-			// },
 			{
-				name: 'ziplineCookieApi',
-				required: false,
+				name: 'ziplineTokenApi',
+				required: true,
 				displayOptions: {
 					show: {
-						authentication: ['Cookie'],
+						authentication: ['token'],
 					},
 				},
-			}
+			},
+			{
+				name: 'ziplineCookieApi',
+				required: true,
+				displayOptions: {
+					show: {
+						authentication: ['cookie'],
+					},
+				},
+			},
 		],
 		requestDefaults: {
-			baseURL: '={{$credentials.ziplineServerUrl}}',
+			baseURL: '={{$credentials.ziplineServerUrl.replace(/\\/+$/, "")}}',
 			headers: {
 				Accept: 'application/json',
-				'Content-Type': 'application/json',
 			},
 		},
 		properties: [
 			{
-				displayName: 'Authentication Method',
+				displayName: 'Authentication',
 				name: 'authentication',
 				type: 'options',
+				noDataExpression: true,
 				options: [
-					{ name: 'Zipline Cookie', value: 'Cookie' },
-					// { name: 'Autodesk ID (3-Legged OAuth2)', value: 'OAuth2' },
+					{ name: 'Token', value: 'token' },
+					{ name: 'Username & Password (Cookie)', value: 'cookie' },
 				],
-				default: 'Cookie',
-				description: 'Choose the authentication method',
+				default: 'token',
+				description: 'How to authenticate against the Zipline API',
 			},
 			{
 				displayName: 'Resource',
@@ -70,29 +73,17 @@ export class ZiplineApi implements INodeType {
 				type: 'options',
 				noDataExpression: true,
 				options: [
-					{ name: 'Authentication', value: 'auth' },
-					{ name: 'Health Check', value: 'healthCheck' },
-					{ name: 'Server', value: 'server' },
-					{ name: 'Setup', value: 'setup' },
-					{ name: 'Statistic', value: 'stats' },
-					{ name: 'Upload', value: 'upload' },
-					{ name: 'User', value: 'user' },
-					{ name: 'Version', value: 'version' },
+					{ name: 'File', value: 'file' },
+					{ name: 'System', value: 'system' },
 				],
-				default: 'upload',
+				default: 'file',
 			},
-			// Operations
-			...upload.operations,
-			// ...upload.parameters,
-			...stats.operations,
-			...stats.parameters,
-			...version.operations,
-			...version.parameters,
-			...user.operations,
-			...user.parameters,
 
-			// Shared Parameters
-			...shared.parameters,
+			// Operations
+			...file.operations,
+			...file.parameters,
+			...system.operations,
+			...system.parameters,
 		],
 	};
 }

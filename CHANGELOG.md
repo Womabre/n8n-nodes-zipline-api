@@ -1,5 +1,47 @@
 # Changelog
 
-## 1.0.0
+All notable changes to this project are documented in this file. The format is based on
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
+[Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+1.0.0 was never published to npm, so these changes reshape the first release rather than
+breaking an existing one.
+
+### Added
+
+- **File** resource: Upload, Get Many, Get, Update, Delete and Download.
+- **System** resource: Get Version, Health Check and Get Stats.
+- Searchable file picker (resource locator) for Get, Update, Delete and Download.
+- Get Many: **Return All** and **Limit**, fetching every page when Return All is on.
+- Download: the output item's JSON carries `fileId`, `fileName`, `mimeType` and `fileSize`.
+- Token credential (`ziplineTokenApi`) alongside the cookie credential.
+- Light and dark icon variants.
+
+### Changed
+
+- Get Many: **Sort By** is a dropdown of the fields Zipline accepts; **Filter** offers
+  "All Files" and "Media Only" (Zipline's `none` and `dashboard`).
+- Upload: an ISO date in **Deletes At** is sent as `date=<ISO>`, the format Zipline requires.
+- Download: the server's `Content-Type` wins; the file extension is only used as a fallback
+  when the server sends none or `application/octet-stream`.
+- Cookie credential: username and password are required, login failures show Zipline's own
+  error message, and the TOTP field explains why 2FA accounts should use a token.
+- Codex category is now "Data & Storage".
+
+### Removed
+
+- The old `user`, `stats` and `version` resources (replaced by File and System).
+- Get Many: the manual **Page** and **Per Page** fields (replaced by Return All and Limit).
+- Leftover starter files: `gulpfile.js`, the empty `index.js`, and the `gulp` dependency.
+
+### Fixed
+
+- Upload: image compression and extension override never reached Zipline; they now use
+  `x-zipline-image-compression-percent` and `x-zipline-file-extension`.
+- Download: without a `Content-Disposition` header the file was named `[object Object]`.
+
+## [1.0.0]
 
 - Initial release of the Zipline API n8n community node.

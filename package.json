@@ -23,7 +23,6 @@
 	"engines": {
 		"node": ">=20.15"
 	},
-	"main": "index.js",
 	"scripts": {
 		"build": "n8n-node build",
 		"build:watch": "tsc --watch",
@@ -59,12 +58,11 @@
 		"@vitest/coverage-v8": "^4.1.2",
 		"eslint": "9.29.0",
 		"eslint-plugin-n8n-nodes-base": "^1.16.3",
-		"gulp": "^5.0.0",
 		"prettier": "3.6.2",
 		"release-it": "^19.0.4",
 		"typescript": "5.9.2",
 		"vitest": "^4.1.2",
-		"auto-changelog": "*"
+		"auto-changelog": "2.6.0"
 	},
 	"peerDependencies": {
 		"n8n-workflow": "*"

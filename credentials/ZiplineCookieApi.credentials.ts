@@ -8,11 +8,26 @@ import {
 	INodeProperties,
 } from 'n8n-workflow';
 
+/**
+ * Pulls Zipline's own reason (its error body is `{ error, code, statusCode }`)
+ * out of a failed login request, falling back to the HTTP error message.
+ */
+function describeLoginError(error: unknown): string {
+	const err = error as {
+		message?: string;
+		response?: { status?: number; data?: { error?: string } };
+		cause?: { response?: { status?: number; data?: { error?: string } } };
+	};
+	const response = err.response ?? err.cause?.response;
+	const reason = response?.data?.error ?? err.message ?? 'unknown error';
+	return response?.status ? `${reason} (HTTP ${response.status})` : reason;
+}
+
 export class ZiplineCookieApi implements ICredentialType {
 	name = 'ziplineCookieApi';
 	displayName = 'Zipline Cookie API';
 	documentationUrl = 'https://zipline.diced.sh/docs/api/authentication';
-	icon: Icon = 'file:ZiplineApi.svg';
+	icon: Icon = { light: 'file:ZiplineApi.svg', dark: 'file:ZiplineApi.dark.svg' };
 
 	properties: INodeProperties[] = [
 		{
@@ -20,6 +35,7 @@ export class ZiplineCookieApi implements ICredentialType {
 			name: 'userName',
 			type: 'string',
 			default: '',
+			required: true,
 		},
 		{
 			displayName: 'Password',
@@ -27,11 +43,13 @@ export class ZiplineCookieApi implements ICredentialType {
 			type: 'string',
 			typeOptions: { password: true },
 			default: '',
+			required: true,
 		},
 		{
 			displayName: 'TOTP Code',
 			name: 'totpCode',
-			description: 'If your account has 2FA enabled',
+			description:
+				'Only if your account has 2FA enabled. A TOTP code is valid for about 30 seconds, so the automatic re-login after the session expires will fail with it. For 2FA accounts, use the Zipline Token API credential instead.',
 			type: 'string',
 			default: '',
 		},
@@ -65,17 +83,22 @@ export class ZiplineCookieApi implements ICredentialType {
 
 		const base = ziplineServerUrl.replace(/\/+$/, '');
 
-		const res = await this.helpers.httpRequest({
-			method: 'POST',
-			url: `${base}/api/auth/login`,
-			body: {
-				username: userName,
-				password,
-				...(totpCode ? { code: totpCode } : {}),
-			},
-			json: true,                // ensure JSON body + auto Content-Type
-			returnFullResponse: true,  // we need headers
-		});
+		let res;
+		try {
+			res = await this.helpers.httpRequest({
+				method: 'POST',
+				url: `${base}/api/auth/login`,
+				body: {
+					username: userName,
+					password,
+					...(totpCode ? { code: totpCode } : {}),
+				},
+				json: true, // ensure JSON body + auto Content-Type
+				returnFullResponse: true, // we need headers
+			});
+		} catch (error) {
+			throw new Error(`Zipline login failed: ${describeLoginError(error)}`);
+		}
 
 		// Body may also include user.sessions[], but prefer Set-Cookie when present
 		const body = (res.body ?? res) as unknown as { user?: { sessions?: string[] } };
