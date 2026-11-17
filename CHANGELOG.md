@@ -6,6 +6,8 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-17
+
 Brings the node in line with n8n's community node UX guidelines, ahead of submitting it for
 verification. The changes sit behind a new node version, so existing workflows keep their output.
 
@@ -68,6 +70,7 @@ First public release of the Zipline API n8n community node.
 - Releases via release-it (`npm run release`), and a GitHub Actions workflow that publishes to
   npm with provenance when a version tag is pushed.
 
-[Unreleased]: https://github.com/Womabre/n8n-nodes-zipline-api/compare/1.0.1...HEAD
+[Unreleased]: https://github.com/Womabre/n8n-nodes-zipline-api/compare/1.1.0...HEAD
+[1.1.0]: https://github.com/Womabre/n8n-nodes-zipline-api/compare/1.0.1...1.1.0
 [1.0.1]: https://github.com/Womabre/n8n-nodes-zipline-api/compare/1.0.0...1.0.1
 [1.0.0]: https://github.com/Womabre/n8n-nodes-zipline-api/releases/tag/1.0.0
