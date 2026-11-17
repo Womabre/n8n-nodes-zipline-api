@@ -2,6 +2,7 @@ import { INodeProperties } from 'n8n-workflow';
 
 import { attachFileFormData, processBinaryResponse } from '../utils/binary';
 import { paginateByPage } from '../utils/pagination';
+import { OUTPUT_V3, returnDeleted, simplifyFileOutput } from '../utils/output';
 import { resourceLocatorModes } from '../parameters/shared-parameters';
 
 /** Page size used while fetching every file for "Return All". */
@@ -68,6 +69,7 @@ export const operations: INodeProperties[] = [
 								type: 'rootProperty',
 								properties: { property: 'page' },
 							},
+							simplifyFileOutput,
 						],
 					},
 				},
@@ -81,6 +83,9 @@ export const operations: INodeProperties[] = [
 					request: {
 						method: 'GET',
 						url: '=/api/user/files/{{$parameter["fileId"]}}',
+					},
+					output: {
+						postReceive: [simplifyFileOutput],
 					},
 				},
 			},
@@ -106,6 +111,9 @@ export const operations: INodeProperties[] = [
 					request: {
 						method: 'DELETE',
 						url: '=/api/user/files/{{$parameter["fileId"]}}',
+					},
+					output: {
+						postReceive: [returnDeleted],
 					},
 				},
 			},
@@ -359,12 +367,28 @@ export const parameters: INodeProperties[] = [
 		type: 'resourceLocator',
 		default: { mode: 'list', value: '' },
 		required: true,
-		description: 'The file to use. Search by name and select from the list, or provide the ID (or short name) directly.',
+		description:
+			'The file to use. Search by name and select from the list, or provide the ID (or short name) directly.',
 		modes: resourceLocatorModes('searchFiles', 'e.g. aB3dE9.png'),
 		displayOptions: {
 			show: {
 				resource: ['file'],
 				operation: ['get', 'update', 'delete', 'download'],
+			},
+		},
+	},
+	// ----- Get / Get Many -----
+	{
+		displayName: 'Simplify',
+		name: 'simplify',
+		type: 'boolean',
+		default: true,
+		description: 'Whether to return a simplified version of the response instead of the raw data',
+		displayOptions: {
+			show: {
+				resource: ['file'],
+				operation: ['get', 'getAll'],
+				'@version': [{ _cnd: { gte: OUTPUT_V3 } }],
 			},
 		},
 	},

@@ -6,6 +6,26 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+Brings the node in line with n8n's community node UX guidelines, ahead of submitting it for
+verification. The changes sit behind a new node version, so existing workflows keep their output.
+
+### Added
+
+- Node version 3, the default for new Zipline API nodes. Version 2 stays available and unchanged.
+- **Simplify** option on File: Get and Get Many (v3, on by default). It returns `id`, `name`,
+  `originalName`, `type`, `size`, `views`, `favorite`, `createdAt`, `deletesAt` and, on Get Many,
+  `url`, instead of Zipline's full 17-19 field file record.
+- README: usage steps, three example workflows, and a note on the v2/v3 output difference.
+
+### Changed
+
+- File: Delete returns a single `{ "deleted": true }` item on v3, instead of the deleted file
+  record Zipline sends back.
+
+### Fixed
+
+- README no longer claims the node can query users; it lists the operations it actually has.
+
 ## [1.0.1] - 2026-10-11
 
 No changes to the node itself; this release moves publishing to npm Trusted Publishing.

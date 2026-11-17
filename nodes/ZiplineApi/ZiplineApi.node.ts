@@ -17,7 +17,10 @@ export class ZiplineApi implements INodeType {
 		displayName: 'Zipline API',
 		name: 'ziplineApi',
 		usableAsTool: true,
-		version: [2],
+		// v3: Delete returns { deleted: true } and File: Get / Get Many gain
+		// Simplify. Workflows saved on v2 keep their raw output.
+		version: [2, 3],
+		defaultVersion: 3,
 		group: ['transform'],
 		icon: { light: 'file:ZiplineApi.svg', dark: 'file:ZiplineApi.dark.svg' },
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
