@@ -3,7 +3,6 @@ import { INodeProperties } from 'n8n-workflow';
 import { attachFileFormData, processBinaryResponse } from '../utils/binary';
 import { paginateByPage } from '../utils/pagination';
 import { OUTPUT_V3, returnDeleted, simplifyFileOutput } from '../utils/output';
-import { resourceLocatorModes } from '../parameters/shared-parameters';
 
 /** Page size used while fetching every file for "Return All". */
 const RETURN_ALL_PAGE_SIZE = 100;
@@ -369,7 +368,27 @@ export const parameters: INodeProperties[] = [
 		required: true,
 		description:
 			'The file to use. Search by name and select from the list, or provide the ID (or short name) directly.',
-		modes: resourceLocatorModes('searchFiles', 'e.g. aB3dE9.png'),
+		// Modes stay inline: n8n's verification scanner ignores eslint-disable
+		// comments, and the lint rule only recognises modes written here.
+		// "By ID" has no regex because Zipline accepts both the long `id` and
+		// the short random `name`.
+		modes: [
+			{
+				displayName: 'From List',
+				name: 'list',
+				type: 'list',
+				typeOptions: {
+					searchListMethod: 'searchFiles',
+					searchable: true,
+				},
+			},
+			{
+				displayName: 'By ID',
+				name: 'id',
+				type: 'string',
+				placeholder: 'e.g. aB3dE9.png',
+			},
+		],
 		displayOptions: {
 			show: {
 				resource: ['file'],

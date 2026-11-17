@@ -25,6 +25,10 @@ verification. The changes sit behind a new node version, so existing workflows k
 ### Fixed
 
 - README no longer claims the node can query users; it lists the operations it actually has.
+- The source passes n8n's verification scanner (`@n8n/scan-community-package`), which failed
+  1.0.1 on three lint errors that `n8n-node lint` allowed. The scanner ignores
+  `eslint-disable` comments and also lints tests, so the File resource locator's modes are now
+  written inline, and a test no longer uses a lowercase `{ name, value }` literal.
 
 ## [1.0.1] - 2026-10-11
 
