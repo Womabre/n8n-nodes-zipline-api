@@ -6,7 +6,7 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
-## [1.1.0] - 2026-11-17
+## [1.1.0] - 2026-11-22
 
 Brings the node in line with n8n's community node UX guidelines, ahead of submitting it for
 verification. The changes sit behind a new node version, so existing workflows keep their output.
