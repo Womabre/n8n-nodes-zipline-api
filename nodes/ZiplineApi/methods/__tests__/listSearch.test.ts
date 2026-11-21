@@ -85,8 +85,8 @@ describe('searchFiles', () => {
 		expect(result.paginationToken).toBe('3');
 	});
 
-	it('falls back to a full-page heuristic for pagination when searching (no `pages` field)', async () => {
-		const fullPage = Array.from({ length: 50 }, (_, i) => ({ id: String(i), name: `file${i}` }));
+	it('falls back to a full-page heuristic for pagination when searching on older servers (no `pages` field)', async () => {
+		const fullPage = Array.from({ length: 100 }, (_, i) => ({ id: String(i), name: `file${i}` }));
 		const { ctx } = makeCtx({ page: fullPage });
 
 		const result = await searchFiles.call(ctx, 'file');

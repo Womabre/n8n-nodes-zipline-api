@@ -1,11 +1,8 @@
 import { INodeProperties } from 'n8n-workflow';
 
 import { attachFileFormData, processBinaryResponse } from '../utils/binary';
-import { paginateByPage } from '../utils/pagination';
+import { getManyFiles } from '../utils/getManyFiles';
 import { OUTPUT_V3, returnDeleted, simplifyFileOutput } from '../utils/output';
-
-/** Page size used while fetching every file for "Return All". */
-const RETURN_ALL_PAGE_SIZE = 100;
 
 export const operations: INodeProperties[] = [
 	{
@@ -44,32 +41,15 @@ export const operations: INodeProperties[] = [
 					request: {
 						method: 'GET',
 						url: '/api/user/files',
-						qs: {
-							page: 1,
-							perpage: `={{$parameter["returnAll"] ? ${RETURN_ALL_PAGE_SIZE} : $parameter["limit"]}}`,
-							sortBy: '={{$parameter["options"]["sortBy"] || undefined}}',
-							order: '={{$parameter["options"]["order"] || undefined}}',
-							filter: '={{$parameter["options"]["filter"] || undefined}}',
-							favorite: '={{$parameter["options"]["favorite"] || undefined}}',
-							searchField: '={{$parameter["options"]["searchField"] || undefined}}',
-							searchQuery: '={{$parameter["options"]["searchQuery"] || undefined}}',
-							folder: '={{$parameter["options"]["folder"] || undefined}}',
-						},
 					},
+					// Always paginated: getManyFiles builds the query, pages up to
+					// Limit (or everything) through the File list module, and
+					// applies Simplify.
 					send: {
-						paginate: '={{$parameter["returnAll"]}}',
+						paginate: true,
 					},
 					operations: {
-						pagination: paginateByPage,
-					},
-					output: {
-						postReceive: [
-							{
-								type: 'rootProperty',
-								properties: { property: 'page' },
-							},
-							simplifyFileOutput,
-						],
+						pagination: getManyFiles,
 					},
 				},
 			},

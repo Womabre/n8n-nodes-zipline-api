@@ -1,6 +1,6 @@
 import { IDataObject, ILoadOptionsFunctions, INodeListSearchResult } from 'n8n-workflow';
 
-const PAGE_SIZE = 50;
+import { fetchFilePage, FileListQuery } from '../fileList';
 
 /** Maps the configured authentication method to the corresponding credential type. */
 function getCredentialType(ctx: ILoadOptionsFunctions): string {
@@ -22,11 +22,9 @@ async function ziplineGet(ctx: ILoadOptionsFunctions, path: string, qs: IDataObj
 }
 
 /**
- * File search backing the resource-locator on `fileId`. Uses Zipline's own
- * `GET /api/user/files` search (`searchField=name`/`searchQuery`) rather than
- * client-side filtering, since the endpoint supports it server-side. When
- * searching by text the API omits `pages`/`total`, so a full page is treated
- * as "there may be more"; without a filter, `pages` gives an exact answer.
+ * File search backing the resource-locator on `fileId`: one page of the File
+ * list per call, newest first, searched by name on the server when a filter
+ * is typed. The File list module decides whether another page follows.
  */
 export async function searchFiles(
 	this: ILoadOptionsFunctions,
@@ -34,14 +32,17 @@ export async function searchFiles(
 	paginationToken?: string,
 ): Promise<INodeListSearchResult> {
 	const page = paginationToken ? Number(paginationToken) : 1;
-	const qs: IDataObject = { page, perpage: PAGE_SIZE, sortBy: 'createdAt', order: 'desc' };
+	const query: FileListQuery = { sortBy: 'createdAt', order: 'desc' };
 	if (filter) {
-		qs.searchField = 'name';
-		qs.searchQuery = filter;
+		query.searchField = 'name';
+		query.searchQuery = filter;
 	}
 
-	const body = await ziplineGet(this, '/api/user/files', qs);
-	const files = (body.page as IDataObject[]) ?? [];
+	const { files, hasMore } = await fetchFilePage(
+		(qs) => ziplineGet(this, '/api/user/files', qs),
+		query,
+		page,
+	);
 
 	const results = files.map((file) => {
 		const name = String(file.name);
@@ -52,6 +53,5 @@ export async function searchFiles(
 		};
 	});
 
-	const hasMore = typeof body.pages === 'number' ? page < (body.pages as number) : files.length === PAGE_SIZE;
 	return { results, paginationToken: hasMore ? String(page + 1) : undefined };
 }

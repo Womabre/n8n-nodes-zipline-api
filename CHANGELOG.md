@@ -24,8 +24,15 @@ verification. The changes sit behind a new node version, so existing workflows k
 - File: Delete returns a single `{ "deleted": true }` item on v3, instead of the deleted file
   record Zipline sends back.
 
+- The file picker loads 100 files per page instead of 50.
+
 ### Fixed
 
+- File: Get Many with a **Limit** above 100 no longer fails. Zipline rejects more than 100
+  files per request, so the node now fetches as many pages as the limit needs.
+- File: Get Many with **Return All**, and the file picker, stop at the exact last page on
+  Zipline v4.8.4 and later, which reports the page count while searching too. Older servers
+  still work: there a page shorter than requested marks the end.
 - README no longer claims the node can query users; it lists the operations it actually has.
 - The source passes n8n's verification scanner (`@n8n/scan-community-package`), which failed
   1.0.1 on three lint errors that `n8n-node lint` allowed. The scanner ignores
